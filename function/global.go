@@ -5,6 +5,8 @@ import (
 	"net/url"
 	"reflect"
 	"strconv"
+	"strings"
+	"time"
 
 	"github.com/CloudyKit/jet/v6"
 	"github.com/shoppehub/sjet/engine"
@@ -26,6 +28,8 @@ func InitGlobalFunc(t *engine.TemplateEngine) {
 	t.Views.AddGlobalFunc("numArray", numArrayFunc)
 	// 支持把数据转换为字符串，比如 objectId
 	t.Views.AddGlobalFunc("oid", oidFunc)
+
+	t.Views.AddGlobalFunc("time", timeFunc)
 
 	t.Views.AddGlobalFunc("formatUrlPath", formatUrlPathFunc)
 
@@ -56,6 +60,28 @@ func oidFunc(a jet.Arguments) reflect.Value {
 	}
 	oid, _ := primitive.ObjectIDFromHex(a.Get(0).String())
 	return reflect.ValueOf(oid)
+}
+func timeFunc(a jet.Arguments) reflect.Value {
+	value := a.Get(0)
+	if !value.IsValid() {
+		return reflect.ValueOf("")
+	}
+	str := value.String()
+	layout := "2006-01-02 15:04:05"
+	if strings.IndexAny(str, ":") == -1 {
+		layout = "2006-01-02"
+	}
+
+	if strings.Contains(str, "T") {
+		layout = time.RFC3339
+	}
+
+	val, _ := time.Parse(layout, str)
+	//if err != nil {
+	//	ejson, _ := json.Marshal(field)
+	//	return nil, errors.New("value :" + value.(string) + " " + err.Error() + " ; the field config is " + string(ejson))
+	//}
+	return reflect.ValueOf(val)
 }
 
 func formatUrlPathFunc(a jet.Arguments) reflect.Value {
