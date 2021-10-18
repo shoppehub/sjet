@@ -30,6 +30,7 @@ func InitGlobalFunc(t *engine.TemplateEngine) {
 	t.Views.AddGlobalFunc("oid", oidFunc)
 
 	t.Views.AddGlobalFunc("time", timeFunc)
+	t.Views.AddGlobalFunc("timeNowFormat", timeNowFormatFunc)
 
 	t.Views.AddGlobalFunc("formatUrlPath", formatUrlPathFunc)
 
@@ -84,6 +85,19 @@ func timeFunc(a jet.Arguments) reflect.Value {
 	return reflect.ValueOf(val)
 }
 
+func timeNowFormatFunc(a jet.Arguments) reflect.Value {
+	format := a.Get(0)
+	layout := ""
+	if !format.IsValid() {
+		//layout = "2006-01-02 15:04:05"
+		layout = time.RFC3339
+	} else {
+		layout = format.String()
+	}
+
+	val := time.Now().Format(layout)
+	return reflect.ValueOf(val)
+}
 func formatUrlPathFunc(a jet.Arguments) reflect.Value {
 	if !a.Get(0).IsValid() {
 		return reflect.ValueOf("")
