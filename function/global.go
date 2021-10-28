@@ -29,8 +29,10 @@ func InitGlobalFunc(t *engine.TemplateEngine) {
 	// 支持把数据转换为字符串，比如 objectId
 	t.Views.AddGlobalFunc("oid", oidFunc)
 
+	//function/strings.go:31 已完成{{ formatTime(info.createdAt,"2006-01-02")}}
 	t.Views.AddGlobalFunc("time", timeFunc)
 	t.Views.AddGlobalFunc("timeNowFormat", timeNowFormatFunc)
+	t.Views.AddGlobalFunc("timeNowAddDateFormat", timeNowAddDateFormatFunc)
 
 	t.Views.AddGlobalFunc("formatUrlPath", formatUrlPathFunc)
 
@@ -86,18 +88,61 @@ func timeFunc(a jet.Arguments) reflect.Value {
 }
 
 func timeNowFormatFunc(a jet.Arguments) reflect.Value {
-	format := a.Get(0)
-	layout := ""
-	if !format.IsValid() {
-		//layout = "2006-01-02 15:04:05"
-		layout = time.RFC3339
-	} else {
-		layout = format.String()
+	layout := time.RFC3339
+
+	if a.IsSet(0) {
+		format := a.Get(0)
+		if !format.IsValid() {
+			//layout = "2006-01-02 15:04:05"
+			layout = time.RFC3339
+		} else {
+			layout = format.String()
+		}
 	}
 
 	val := time.Now().Format(layout)
 	return reflect.ValueOf(val)
 }
+
+func timeNowAddDateFormatFunc(a jet.Arguments) reflect.Value {
+	originalTime := time.Now()
+
+	days := 0
+	if a.IsSet(0) {
+		daysValue := a.Get(0)
+		if daysValue.IsValid() && daysValue.Kind() == reflect.Int {
+			days = int(daysValue.Int())
+		}
+	}
+	months := 0
+	if a.IsSet(1) {
+		monthsValue := a.Get(1)
+		if monthsValue.IsValid() && monthsValue.Kind() == reflect.Int {
+			days = int(monthsValue.Int())
+		}
+	}
+	years := 0
+	if a.IsSet(2) {
+		yearsValue := a.Get(2)
+		if yearsValue.IsValid() && yearsValue.Kind() == reflect.Int {
+			days = int(yearsValue.Int())
+		}
+	}
+	//layout = "2006-01-02 15:04:05"
+	layout := time.RFC3339
+
+	if a.IsSet(3) {
+		format := a.Get(3)
+		if format.IsValid() {
+			layout = format.String()
+		}
+	}
+
+	val := originalTime.AddDate(years, months, days).Format(layout)
+
+	return reflect.ValueOf(val)
+}
+
 func formatUrlPathFunc(a jet.Arguments) reflect.Value {
 	if !a.Get(0).IsValid() {
 		return reflect.ValueOf("")
