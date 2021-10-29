@@ -179,5 +179,5 @@ func regexStringFormatFunc(a jet.Arguments) reflect.Value {
 			chars = append(chars, letter)
 		}
 	}
-	return reflect.ValueOf(chars)
+	return reflect.ValueOf(string(chars))
 }
