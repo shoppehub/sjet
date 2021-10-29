@@ -88,7 +88,7 @@ func timeFunc(a jet.Arguments) reflect.Value {
 }
 
 func timeNowFormatFunc(a jet.Arguments) reflect.Value {
-	layout := time.RFC3339
+	layout := "2006-01-02"
 
 	if a.IsSet(0) {
 		format := a.Get(0)
@@ -110,22 +110,28 @@ func timeNowAddDateFormatFunc(a jet.Arguments) reflect.Value {
 	days := 0
 	if a.IsSet(0) {
 		daysValue := a.Get(0)
-		if daysValue.IsValid() && daysValue.Kind() == reflect.Int {
+		if daysValue.IsValid() && daysValue.Kind() == reflect.Float64 {
+			days = int(daysValue.Float())
+		} else {
 			days = int(daysValue.Int())
 		}
 	}
 	months := 0
 	if a.IsSet(1) {
 		monthsValue := a.Get(1)
-		if monthsValue.IsValid() && monthsValue.Kind() == reflect.Int {
-			days = int(monthsValue.Int())
+		if monthsValue.IsValid() && monthsValue.Kind() == reflect.Float64 {
+			months = int(monthsValue.Float())
+		} else {
+			months = int(monthsValue.Int())
 		}
 	}
 	years := 0
 	if a.IsSet(2) {
 		yearsValue := a.Get(2)
-		if yearsValue.IsValid() && yearsValue.Kind() == reflect.Int {
-			days = int(yearsValue.Int())
+		if yearsValue.IsValid() && yearsValue.Kind() == reflect.Float64 {
+			years = int(yearsValue.Float())
+		} else {
+			years = int(yearsValue.Int())
 		}
 	}
 	//layout = "2006-01-02 15:04:05"
