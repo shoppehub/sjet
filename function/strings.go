@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode"
 
 	"github.com/CloudyKit/jet/v6"
 	"github.com/shopspring/decimal"
@@ -31,6 +32,8 @@ func init() {
 	globalFunc["formatTime"] = formatTimeFunc
 
 	globalFunc["writeJson"] = writeJsonFunc
+
+	globalFunc["regexStringFormat"] = regexStringFormatFunc
 
 }
 
@@ -145,4 +148,36 @@ func formatTimeFunc(a jet.Arguments) reflect.Value {
 func writeJsonFunc(a jet.Arguments) reflect.Value {
 	st, _ := json.Marshal(a.Get(0).Interface())
 	return reflect.ValueOf(string(st))
+}
+
+// 如果存在特殊字符，直接在特殊字符前添加\
+/**
+判断是否为字母： unicode.IsLetter(v)
+判断是否为十进制数字： unicode.IsDigit(v)
+判断是否为数字： unicode.IsNumber(v)
+判断是否为空白符号： unicode.IsSpace(v)
+判断是否为Unicode标点字符 :unicode.IsPunct(v)
+判断是否为中文：unicode.Han(v)
+*/
+func SpecialLetters(letter rune) (bool, []rune) {
+	if unicode.IsSymbol(letter) || unicode.IsPunct(letter) || unicode.Is(unicode.Han, letter) {
+		var chars []rune
+		chars = append(chars, '\\', letter)
+		return true, chars
+	}
+	return false, nil
+}
+
+func regexStringFormatFunc(a jet.Arguments) reflect.Value {
+	str := a.Get(0).String()
+	var chars []rune
+	for _, letter := range str {
+		ok, letters := SpecialLetters(letter)
+		if ok {
+			chars = append(chars, letters...)
+		} else {
+			chars = append(chars, letter)
+		}
+	}
+	return reflect.ValueOf(chars)
 }
