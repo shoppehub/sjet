@@ -33,6 +33,7 @@ func InitGlobalFunc(t *engine.TemplateEngine) {
 	t.Views.AddGlobalFunc("time", timeFunc)
 	t.Views.AddGlobalFunc("timeNowFormat", timeNowFormatFunc)
 	t.Views.AddGlobalFunc("timeNowAddDateFormat", timeNowAddDateFormatFunc)
+	t.Views.AddGlobalFunc("timeBefore", timeBeforeFunc)
 
 	t.Views.AddGlobalFunc("formatUrlPath", formatUrlPathFunc)
 
@@ -147,6 +148,53 @@ func timeNowAddDateFormatFunc(a jet.Arguments) reflect.Value {
 	val := originalTime.AddDate(years, months, days).Format(layout)
 
 	return reflect.ValueOf(val)
+}
+
+func timeBeforeFunc(a jet.Arguments) reflect.Value {
+	time1 := time.Now()
+	layout1 := "2006-01-02 15:04:05"
+	layout2 := "2006-01-02 15:04:05"
+
+	if a.IsSet(3) {
+		// 如果传入四个参数，则格式 为 t1,l1, t2, l2
+		format2 := a.Get(3)
+		if format2.IsValid() {
+			layout2 = format2.String()
+		}
+		format1 := a.Get(1)
+		if format1.IsValid() {
+			layout1 = format1.String()
+		}
+		time1, time1Error := time.Parse(layout1, a.Get(0).String())
+		if time1Error != nil {
+			return reflect.ValueOf(time1Error.Error())
+		}
+		time2, time2Error := time.Parse(layout2, a.Get(2).String())
+		if time2Error != nil {
+			return reflect.ValueOf(time2Error.Error())
+		}
+		return reflect.ValueOf(time1.Before(time2))
+	} else if a.IsSet(1) { // 第四个参数没值，且第二个参数有值
+		// 如果传入2个参数，则格式 为 t1, t2
+		time1, time1Error := time.Parse(layout1, a.Get(0).String())
+		if time1Error != nil {
+			return reflect.ValueOf(time1Error.Error())
+		}
+		time2, time2Error := time.Parse(layout2, a.Get(1).String())
+		if time2Error != nil {
+			return reflect.ValueOf(time2Error.Error())
+		}
+		return reflect.ValueOf(time1.Before(time2))
+	} else if a.IsSet(0) {
+		// 如果传入1个参数，则为 t2, t1 默认为当前时间
+		time2, time2Error := time.Parse(layout2, a.Get(1).String())
+		if time2Error != nil {
+			return reflect.ValueOf(time2Error.Error())
+		}
+		return reflect.ValueOf(time1.Before(time2))
+	}
+
+	return reflect.ValueOf("参数异常！")
 }
 
 func formatUrlPathFunc(a jet.Arguments) reflect.Value {
