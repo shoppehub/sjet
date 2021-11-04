@@ -35,6 +35,12 @@ func init() {
 
 	globalFunc["regexStringFormat"] = regexStringFormatFunc
 
+	globalFunc["title"] = titleFunc
+
+	globalFunc["toUpper"] = toUpperFunc
+
+	globalFunc["toLower"] = toLowerFunc
+
 }
 
 func stringFunc(a jet.Arguments) reflect.Value {
@@ -180,4 +186,19 @@ func regexStringFormatFunc(a jet.Arguments) reflect.Value {
 		}
 	}
 	return reflect.ValueOf(string(chars))
+}
+
+func titleFunc(a jet.Arguments) reflect.Value {
+	str := a.Get(0).String()
+	return reflect.ValueOf(strings.Title(str))
+}
+
+func toUpperFunc(a jet.Arguments) reflect.Value {
+	str := a.Get(0).String()
+	return reflect.ValueOf(strings.ToUpper(str))
+}
+
+func toLowerFunc(a jet.Arguments) reflect.Value {
+	str := a.Get(0).String()
+	return reflect.ValueOf(strings.ToLower(str))
 }
