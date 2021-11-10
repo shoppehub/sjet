@@ -34,6 +34,7 @@ func InitGlobalFunc(t *engine.TemplateEngine) {
 	t.Views.AddGlobalFunc("timeNowFormat", timeNowFormatFunc)
 	t.Views.AddGlobalFunc("timeNowAddDateFormat", timeNowAddDateFormatFunc)
 	t.Views.AddGlobalFunc("timeBefore", timeBeforeFunc)
+	t.Views.AddGlobalFunc("timeOffset", timeOffsetFunc)
 
 	t.Views.AddGlobalFunc("formatUrlPath", formatUrlPathFunc)
 
@@ -192,6 +193,44 @@ func timeBeforeFunc(a jet.Arguments) reflect.Value {
 			return reflect.ValueOf(time2Error.Error())
 		}
 		return reflect.ValueOf(time1.Before(time2))
+	}
+
+	return reflect.ValueOf("参数异常！")
+}
+func timeOffsetFunc(a jet.Arguments) reflect.Value {
+	precision := "year"
+	time1 := time.Now()
+	time2 := time.Now()
+	layout1 := "2006-01-02 15:04:05"
+	layout2 := "2006-01-02 15:04:05"
+	if a.NumOfArguments() > 1 {
+		precision = a.Get(0).String()
+	}
+	if a.NumOfArguments() == 5 {
+		layout1 = a.Get(2).String()
+		layout2 = a.Get(4).String()
+		time1, _ = time.Parse(layout1, a.Get(1).String())
+		time2, _ = time.Parse(layout2, a.Get(3).String())
+	} else if a.NumOfArguments() == 3 {
+		layout2 = a.Get(2).String()
+		time2, _ = time.Parse(layout2, a.Get(1).String())
+	} else if a.NumOfArguments() == 1 {
+		layout2 = "2006"
+		time2, _ = time.Parse(layout2, a.Get(0).String())
+	}
+	switch precision {
+	case "year":
+		return reflect.ValueOf(time1.Year() - time2.Year())
+		break
+	case "day":
+		return reflect.ValueOf(time1.Sub(time2).Hours() / 24)
+		break
+	case "hours":
+		return reflect.ValueOf(time1.Sub(time2).Hours())
+		break
+	default:
+		return reflect.ValueOf("参数异常！")
+		break
 	}
 
 	return reflect.ValueOf("参数异常！")
