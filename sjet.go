@@ -30,7 +30,7 @@ func CreateWithMem() *engine.TemplateEngine {
 	return e
 }
 
-func RenderHTMLTemplate(eng *engine.TemplateEngine, c *gin.Context) {
+func BuildHTMLTemplate(eng *engine.TemplateEngine, c *gin.Context) string {
 
 	templateContext := context.InitTemplateContext(eng, c)
 
@@ -39,7 +39,7 @@ func RenderHTMLTemplate(eng *engine.TemplateEngine, c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{
 			"err": err.Error(),
 		})
-		return
+		return ""
 	}
 
 	for key, v := range customFunc {
@@ -69,9 +69,17 @@ func RenderHTMLTemplate(eng *engine.TemplateEngine, c *gin.Context) {
 
 	if err != nil {
 		c.Writer.WriteString(err.Error())
-		return
+		return ""
 	}
-	c.Writer.Write(buf.Bytes())
+	return buf.String()
+}
+
+func RenderHTMLTemplate(eng *engine.TemplateEngine, c *gin.Context) {
+	htmlString := BuildHTMLTemplate(eng, c)
+	if htmlString != "" {
+		c.Writer.Write([]byte(htmlString))
+	}
+	//	nothing to do， before return ""，  BuildHTMLTemplate is c.Writer.Write(err.Error())  to client
 }
 
 func RenderMemTemplate(eng *engine.TemplateEngine, templateContext *context.TemplateContext, c *gin.Context, fnName string, fnTemplate string) (string, error) {
