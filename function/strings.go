@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -34,6 +35,8 @@ func init() {
 	globalFunc["writeJson"] = writeJsonFunc
 
 	globalFunc["regexStringFormat"] = regexStringFormatFunc
+
+	globalFunc["replaceAllRegex"] = replaceAllRegexFunc
 
 	globalFunc["title"] = titleFunc
 
@@ -186,6 +189,15 @@ func regexStringFormatFunc(a jet.Arguments) reflect.Value {
 		}
 	}
 	return reflect.ValueOf(string(chars))
+}
+
+func replaceAllRegexFunc(a jet.Arguments) reflect.Value {
+	src := a.Get(0).String()
+	oldReg := a.Get(1).String()
+	repl := a.Get(2).String()
+	regExp := regexp.MustCompile(oldReg)
+	result := regExp.ReplaceAllString(src, repl)
+	return reflect.ValueOf(result)
 }
 
 func titleFunc(a jet.Arguments) reflect.Value {
