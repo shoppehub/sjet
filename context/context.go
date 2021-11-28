@@ -28,7 +28,10 @@ func (ctx *TemplateContext) FindTemplate(t *engine.TemplateEngine) error {
 
 	var view *jet.Template
 	var err error
-
+	if strings.HasSuffix(ctx.TempatePath, ".html") {
+		// 为了使 /index.html 能访问首页，因为阿里云oss需要时文件才能缓存
+		ctx.TempatePath = strings.TrimSuffix(ctx.TempatePath, ".html")
+	}
 	if view, err = t.Views.GetTemplate(TemplateRoot + "/" + ctx.TempatePath); err != nil {
 		if strings.HasSuffix(ctx.TempatePath, "/") {
 			ctx.TempatePath += "index"
