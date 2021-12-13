@@ -4,6 +4,7 @@ import (
 	"math"
 	"net/url"
 	"reflect"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -43,6 +44,7 @@ func InitGlobalFunc(t *engine.TemplateEngine) {
 	t.Views.AddGlobalFunc("append", appendFunc)
 
 	t.Views.AddGlobalFunc("array", arrayFunc)
+	t.Views.AddGlobalFunc("arraySort", arraySortFunc)
 
 	t.Views.AddGlobalFunc("aggregate", aggregateFunc)
 	t.Views.AddGlobalFunc("pipeline", aggregateFunc)
@@ -380,6 +382,26 @@ func arrayFunc(a jet.Arguments) reflect.Value {
 	}
 	m := reflect.ValueOf(p)
 	return m
+}
+func arraySortFunc(a jet.Arguments) reflect.Value {
+	paramSlice := a.Get(0).Slice(0, a.Get(0).Len())
+
+	var result []map[string]interface{}
+	for i := 0; i < paramSlice.Len(); i++ {
+		item := paramSlice.Index(i)
+		temp := item.Interface().(map[string]interface{})
+		result = append(result, temp)
+	}
+
+	sort.Slice(result, func(i, j int) bool {
+		iSort, _ := strconv.Atoi(result[i]["sort"].(string))
+		jSort, _ := strconv.Atoi(result[j]["sort"].(string))
+		if iSort < jSort {
+			return true
+		}
+		return false
+	})
+	return reflect.ValueOf(result)
 }
 
 func logFunc(a jet.Arguments) reflect.Value {
