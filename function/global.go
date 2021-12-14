@@ -394,8 +394,17 @@ func arraySortFunc(a jet.Arguments) reflect.Value {
 	}
 
 	sort.Slice(result, func(i, j int) bool {
-		iSort, _ := strconv.Atoi(result[i]["sort"].(string))
-		jSort, _ := strconv.Atoi(result[j]["sort"].(string))
+		var iSort, jSort int
+		t := reflect.TypeOf(result[i]["sort"]).Kind()
+		switch t {
+		case reflect.Float64:
+			iSort = int(result[i]["sort"].(float64))
+			jSort = int(result[j]["sort"].(float64))
+		default:
+			iSort = result[i]["sort"].(int)
+			jSort = result[j]["sort"].(int)
+		}
+
 		if iSort < jSort {
 			return true
 		}
