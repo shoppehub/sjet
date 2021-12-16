@@ -36,7 +36,7 @@ func RenderHTMLTemplate(eng *engine.TemplateEngine, c *gin.Context) {
 
 	err := templateContext.FindTemplate(eng)
 	if err != nil {
-		c.Redirect(http.StatusNotFound, "/error/404")
+		c.Redirect(http.StatusFound, "/error/404")
 		return
 	}
 
