@@ -29,6 +29,10 @@ func (ctx *TemplateContext) FindTemplate(t *engine.TemplateEngine) error {
 	var view *jet.Template
 	var err error
 
+	// support .html
+	if strings.HasSuffix(ctx.TempatePath, ".html") {
+		ctx.TempatePath = ctx.TempatePath[1 : len(ctx.TempatePath)-5]
+	}
 	if view, err = t.Views.GetTemplate(TemplateRoot + "/" + ctx.TempatePath); err != nil {
 		if strings.HasSuffix(ctx.TempatePath, "/") {
 			ctx.TempatePath += "index"
