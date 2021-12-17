@@ -31,7 +31,7 @@ func (ctx *TemplateContext) FindTemplate(t *engine.TemplateEngine) error {
 
 	// support .html
 	if strings.HasSuffix(ctx.TempatePath, ".html") {
-		ctx.TempatePath = ctx.TempatePath[1 : len(ctx.TempatePath)-5]
+		ctx.TempatePath = ctx.TempatePath[0 : len(ctx.TempatePath)-5]
 	}
 	if view, err = t.Views.GetTemplate(TemplateRoot + "/" + ctx.TempatePath); err != nil {
 		if strings.HasSuffix(ctx.TempatePath, "/") {
