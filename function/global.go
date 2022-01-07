@@ -395,6 +395,12 @@ func arraySortFunc(a jet.Arguments) reflect.Value {
 
 	sort.Slice(result, func(i, j int) bool {
 		var iSort, jSort int
+		if _, ok := result[i]["sort"]; !ok {
+			result[i]["sort"] = 99999
+		}
+		if _, ok := result[j]["sort"]; !ok {
+			result[j]["sort"] = 99999
+		}
 		t := reflect.TypeOf(result[i]["sort"]).Kind()
 		switch t {
 		case reflect.Float64:
