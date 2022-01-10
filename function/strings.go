@@ -227,7 +227,8 @@ func containsFunc(a jet.Arguments) reflect.Value {
 }
 
 func casIdEncodeFunc(a jet.Arguments) reflect.Value {
-	casId := a.Get(0).Int()
+	casIdStr := a.Get(0).String()
+	casId, _ := strconv.ParseInt(casIdStr, 10, 64)
 	if casId < int64(10000000) {
 		casId = casId + 100000000
 	}
