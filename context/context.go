@@ -171,4 +171,22 @@ func handlerContext(vars *jet.VarMap, context *map[string]interface{}) {
 		*context = ctx
 		return reflect.Value{}
 	})
+
+	// 抛出异常使用
+	vars.SetFunc("throw", func(a jet.Arguments) reflect.Value {
+		ctx := *context
+
+		if a.NumOfArguments() == 2 {
+			ctx["code"] = a.Get(0).Interface()
+			ctx["msg"] = a.Get(1).Interface()
+		}
+		if a.NumOfArguments() == 1 {
+			ctx["msg"] = a.Get(0).Interface()
+		}
+
+		*context = ctx
+		//return reflect.Value{}
+		panic("throw::::")
+	})
+
 }
