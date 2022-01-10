@@ -44,6 +44,11 @@ func init() {
 
 	globalFunc["toLower"] = toLowerFunc
 
+	globalFunc["contains"] = containsFunc
+
+	globalFunc["casIdEncode"] = casIdEncodeFunc
+	globalFunc["casIdDecode"] = casIdDecodeFunc
+
 }
 
 func stringFunc(a jet.Arguments) reflect.Value {
@@ -213,4 +218,35 @@ func toUpperFunc(a jet.Arguments) reflect.Value {
 func toLowerFunc(a jet.Arguments) reflect.Value {
 	str := a.Get(0).String()
 	return reflect.ValueOf(strings.ToLower(str))
+}
+
+func containsFunc(a jet.Arguments) reflect.Value {
+	str := a.Get(0).String()
+	subStr := a.Get(1).String()
+	return reflect.ValueOf(strings.Contains(str, subStr))
+}
+
+func casIdEncodeFunc(a jet.Arguments) reflect.Value {
+	casId := a.Get(0).Int()
+	if casId < int64(10000000) {
+		casId = casId + 100000000
+	}
+	encodedStr := strings.ToUpper(strconv.FormatInt(casId, 16))
+	encodedStr = encodedStr[4:] + encodedStr[0:4]
+	return reflect.ValueOf(encodedStr)
+}
+
+func casIdDecodeFunc(a jet.Arguments) reflect.Value {
+	encodedStr := a.Get(0).String()
+	encodedStr = encodedStr[len(encodedStr)-4:] + encodedStr[0:len(encodedStr)-4]
+	fmt.Println(encodedStr)
+	n, err := strconv.ParseUint(encodedStr, 16, 32)
+	if err != nil {
+		panic("Parse Error")
+	}
+	casId := uint32(n)
+	if casId > uint32(100000000) {
+		casId = casId - 100000000
+	}
+	return reflect.ValueOf(casId)
 }
