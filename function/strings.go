@@ -184,6 +184,11 @@ func SpecialLetters(letter rune) (bool, []rune) {
 
 func regexStringFormatFunc(a jet.Arguments) reflect.Value {
 	str := a.Get(0).String()
+	chars := AddEscapedChar(str)
+	return reflect.ValueOf(chars)
+}
+
+func AddEscapedChar(str string) string {
 	var chars []rune
 	for _, letter := range str {
 		ok, letters := SpecialLetters(letter)
@@ -193,7 +198,7 @@ func regexStringFormatFunc(a jet.Arguments) reflect.Value {
 			chars = append(chars, letter)
 		}
 	}
-	return reflect.ValueOf(string(chars))
+	return string(chars)
 }
 
 func replaceAllRegexFunc(a jet.Arguments) reflect.Value {
