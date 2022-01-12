@@ -18,7 +18,7 @@ type TemplateContext struct {
 
 	Template *jet.Template
 
-	TempatePath string
+	TemplatePath string
 }
 
 var TemplateRoot = "pages"
@@ -28,24 +28,24 @@ func (ctx *TemplateContext) FindTemplate(t *engine.TemplateEngine) error {
 
 	var view *jet.Template
 	var err error
-	if strings.HasSuffix(ctx.TempatePath, ".html") {
+	if strings.HasSuffix(ctx.TemplatePath, ".html") {
 		// 为了使 /index.html 能访问首页，因为阿里云oss需要时文件才能缓存
-		ctx.TempatePath = strings.TrimSuffix(ctx.TempatePath, ".html")
+		ctx.TemplatePath = strings.TrimSuffix(ctx.TemplatePath, ".html")
 	}
-	if view, err = t.Views.GetTemplate(TemplateRoot + "/" + ctx.TempatePath); err != nil {
-		if strings.HasSuffix(ctx.TempatePath, "/") {
-			ctx.TempatePath += "index"
+	if view, err = t.Views.GetTemplate(TemplateRoot + "/" + ctx.TemplatePath); err != nil {
+		if strings.HasSuffix(ctx.TemplatePath, "/") {
+			ctx.TemplatePath += "index"
 		} else {
-			ctx.TempatePath += "/index"
+			ctx.TemplatePath += "/index"
 		}
 
-		if view, err = t.Views.GetTemplate(TemplateRoot + "/" + ctx.TempatePath); err != nil {
+		if view, err = t.Views.GetTemplate(TemplateRoot + "/" + ctx.TemplatePath); err != nil {
 			return err
 		}
 	}
 
 	ctx.Template = view
-	templatePath := strings.TrimPrefix(ctx.TempatePath, "/")
+	templatePath := strings.TrimPrefix(ctx.TemplatePath, "/")
 	ctx.Vars.Set("namespace", strings.ReplaceAll(templatePath, "/", "_"))
 
 	return nil
@@ -65,7 +65,7 @@ func InitTemplateContext(t *engine.TemplateEngine, c *gin.Context) *TemplateCont
 		Vars:    &vars,
 		Context: &context,
 	}
-	ctxData.TempatePath = strings.TrimPrefix(c.Request.URL.Path, "/")
+	ctxData.TemplatePath = strings.TrimPrefix(c.Request.URL.Path, "/")
 
 	// handlerTemplateFile(c, &ctxData)
 
@@ -74,7 +74,7 @@ func InitTemplateContext(t *engine.TemplateEngine, c *gin.Context) *TemplateCont
 
 // 解析模板路径 /:module/:page/:templ
 func handlerTemplateFile(c *gin.Context, ctx *TemplateContext) {
-	ctx.TempatePath = strings.TrimPrefix(c.Request.URL.Path, "/")
+	ctx.TemplatePath = strings.TrimPrefix(c.Request.URL.Path, "/")
 }
 
 func getParamInContext(key string, c *gin.Context, body *map[string]interface{}) interface{} {
