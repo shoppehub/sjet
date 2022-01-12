@@ -150,10 +150,15 @@ func handlerGetCtx(vars *jet.VarMap, c *gin.Context) {
 		return reflect.ValueOf(val)
 	})
 
+	vars.SetFunc("getRequest", func(a jet.Arguments) reflect.Value {
+		return reflect.ValueOf(c.Request)
+	})
+
 	vars.SetFunc("getURL", func(a jet.Arguments) reflect.Value {
 		c.Request.URL.Host = c.Request.Host
 		return reflect.ValueOf(c.Request.URL)
 	})
+
 }
 
 func handlerContext(vars *jet.VarMap, context *map[string]interface{}) {
