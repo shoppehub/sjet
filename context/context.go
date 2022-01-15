@@ -107,6 +107,12 @@ func handlerGetCtx(vars *jet.VarMap, c *gin.Context) {
 	vars.SetFunc("getBody", func(a jet.Arguments) reflect.Value {
 		return reflect.ValueOf(&body)
 	})
+	vars.SetFunc("putBody", func(a jet.Arguments) reflect.Value {
+		key := a.Get(0).String()
+		value := a.Get(1).String()
+		body[key] = value
+		return reflect.ValueOf(&body)
+	})
 
 	vars.SetFunc("getCtx", func(a jet.Arguments) reflect.Value {
 		key := a.Get(0).String()
