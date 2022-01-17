@@ -228,11 +228,7 @@ func casIdEncodeFunc(a jet.Arguments) reflect.Value {
 	default:
 		casId = a.Get(0).Int()
 	}
-	if casId < int64(10000000) {
-		casId = casId + 100000000
-	}
-	encodedStr := strings.ToUpper(strconv.FormatInt(casId, 16))
-	encodedStr = encodedStr[4:] + encodedStr[0:4]
+	encodedStr := common.EncodeCasId(casId)
 	return reflect.ValueOf(encodedStr)
 }
 

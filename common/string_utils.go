@@ -1,6 +1,10 @@
 package common
 
-import "unicode"
+import (
+	"strconv"
+	"strings"
+	"unicode"
+)
 
 func HasUnicodeHan(str string) bool {
 	var count int
@@ -29,4 +33,13 @@ func SpecialLetters(letter rune) (bool, []rune) {
 		return true, chars
 	}
 	return false, nil
+}
+
+func EncodeCasId(casId int64) string {
+	if casId < int64(10000000) {
+		casId = casId + 100000000
+	}
+	encodedStr := strings.ToUpper(strconv.FormatInt(casId, 16))
+	encodedStr = encodedStr[4:] + encodedStr[0:4]
+	return encodedStr
 }
