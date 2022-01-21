@@ -1,6 +1,7 @@
 package function
 
 import (
+	"github.com/shoppehub/sjet/common"
 	"math"
 	"net/url"
 	"reflect"
@@ -55,6 +56,7 @@ func InitGlobalFunc(t *engine.TemplateEngine) {
 	t.Views.AddGlobalFunc("parseInt", parseIntFunc)
 	t.Views.AddGlobalFunc("ceil", ceilFunc)
 	t.Views.AddGlobalFunc("floor", floorFunc)
+	t.Views.AddGlobalFunc("randomInt", randomIntFunc)
 
 	t.Views.AddGlobalFunc("log", logFunc)
 
@@ -343,6 +345,31 @@ func ceilFunc(a jet.Arguments) reflect.Value {
 func floorFunc(a jet.Arguments) reflect.Value {
 	value := a.Get(0).Interface()
 	return reflect.ValueOf(int(math.Floor(value.(float64))))
+}
+
+func randomIntFunc(a jet.Arguments) reflect.Value {
+	if a.NumOfArguments() != 2 {
+		return reflect.ValueOf("this func only support 2 params")
+	}
+	min := 0
+	k := a.Get(0).Kind()
+	switch k {
+	case reflect.Float64:
+		min = int(a.Get(0).Float())
+	default:
+		min = int(a.Get(0).Int())
+	}
+
+	max := 100
+	k2 := a.Get(1).Kind()
+	switch k2 {
+	case reflect.Float64:
+		max = int(a.Get(1).Float())
+	default:
+		max = int(a.Get(1).Int())
+	}
+
+	return reflect.ValueOf(common.RandomInt(min, max))
 }
 
 func mFunc(a jet.Arguments) reflect.Value {
