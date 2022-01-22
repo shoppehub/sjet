@@ -26,8 +26,6 @@ func init() {
 
 	globalFunc["substring"] = substringFunc
 
-	globalFunc["split"] = splitFunc
-
 	globalFunc["indexOf"] = indexOfFunc
 
 	globalFunc["lenStr"] = lenStrFunc
@@ -114,14 +112,6 @@ func substringFunc(a jet.Arguments) reflect.Value {
 	}
 }
 
-func splitFunc(a jet.Arguments) reflect.Value {
-	if a.NumOfArguments() != 2 {
-		return reflect.ValueOf("Num Of Arguments Error !")
-	}
-	str := a.Get(0).String()
-	sep := a.Get(1).String()
-	return reflect.ValueOf(strings.Split(str, sep))
-}
 func lenStrFunc(a jet.Arguments) reflect.Value {
 	value := a.Get(0).Interface()
 	strs := []rune(value.(string))
