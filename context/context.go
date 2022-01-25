@@ -165,6 +165,9 @@ func handlerGetCtx(vars *jet.VarMap, c *gin.Context) {
 		return reflect.ValueOf(c.Request.URL)
 	})
 
+	vars.SetFunc("getHeader", func(a jet.Arguments) reflect.Value {
+		return reflect.ValueOf(c.Request.Header)
+	})
 }
 
 func handlerContext(vars *jet.VarMap, context *map[string]interface{}) {
