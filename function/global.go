@@ -42,6 +42,7 @@ func InitGlobalFunc(t *engine.TemplateEngine) {
 
 	t.Views.AddGlobalFunc("map", mapFunc)
 	t.Views.AddGlobalFunc("put", putFunc)
+	t.Views.AddGlobalFunc("delete", deleteFunc)
 	t.Views.AddGlobalFunc("append", appendFunc)
 
 	t.Views.AddGlobalFunc("array", arrayFunc)
@@ -276,6 +277,20 @@ func mapFunc(a jet.Arguments) reflect.Value {
 		m.SetMapIndex(a.Get(i), a.Get(i+1))
 	}
 	return m
+}
+
+func deleteFunc(a jet.Arguments) reflect.Value {
+	name := a.Get(0).Type().Name()
+
+	if name == "M" {
+		m := a.Get(0).Interface().(bson.M)
+		m[a.Get(1).String()] = a.Get(2).Interface()
+		return reflect.ValueOf(m)
+	} else {
+		m := a.Get(0).Interface().(map[string]interface{})
+		delete(m, a.Get(1).String())
+		return reflect.ValueOf(m)
+	}
 }
 
 func putFunc(a jet.Arguments) reflect.Value {
