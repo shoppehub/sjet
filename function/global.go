@@ -55,6 +55,7 @@ func InitGlobalFunc(t *engine.TemplateEngine) {
 	t.Views.AddGlobalFunc("d", dFunc)
 
 	t.Views.AddGlobalFunc("parseInt", parseIntFunc)
+	t.Views.AddGlobalFunc("parseFloat", parseFloatFunc)
 	t.Views.AddGlobalFunc("ceil", ceilFunc)
 	t.Views.AddGlobalFunc("floor", floorFunc)
 	t.Views.AddGlobalFunc("randomInt", randomIntFunc)
@@ -349,6 +350,12 @@ func appendFunc(a jet.Arguments) reflect.Value {
 func parseIntFunc(a jet.Arguments) reflect.Value {
 	value := a.Get(0).Interface()
 	val, _ := strconv.ParseInt(value.(string), 10, 64)
+	return reflect.ValueOf(val)
+}
+
+func parseFloatFunc(a jet.Arguments) reflect.Value {
+	value := a.Get(0).Interface()
+	val, _ := strconv.ParseFloat(value.(string), 64)
 	return reflect.ValueOf(val)
 }
 
