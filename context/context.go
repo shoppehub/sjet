@@ -2,6 +2,7 @@ package context
 
 import (
 	"reflect"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -163,6 +164,12 @@ func handlerGetCtx(vars *jet.VarMap, c *gin.Context) {
 	vars.SetFunc("getURL", func(a jet.Arguments) reflect.Value {
 		c.Request.URL.Host = c.Request.Host
 		return reflect.ValueOf(c.Request.URL)
+	})
+
+	vars.SetFunc("getReferHost", func(a jet.Arguments) reflect.Value {
+		reg := regexp.MustCompile(`((http[s]?)?(://))?([^/]*)(/?.*)`)
+		referHost := reg.ReplaceAllString(c.Request.Referer(), "$4")
+		return reflect.ValueOf(referHost)
 	})
 
 	vars.SetFunc("getHeader", func(a jet.Arguments) reflect.Value {
