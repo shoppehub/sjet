@@ -26,7 +26,7 @@ func (d *Demo) GetName() string {
 func TestInt(t *testing.T) {
 	conf.Init("")
 
-	RegCustomFunc("dd", func(c *gin.Context) jet.Func {
+	RegCustomFunc("demo", func(c *gin.Context) jet.Func {
 
 		return func(a jet.Arguments) reflect.Value {
 			fmt.Println(a.Get(0).Type().Kind().String())
@@ -55,11 +55,9 @@ func SetupRouter(engine *engine.TemplateEngine) *gin.Engine {
 		templateContext := context.InitTemplateContext(engine, c)
 
 		template := `
-		{{dd(1).GetName()}}
-		{{context("a","11")}}
-		{{exit() }}
-		{{context("a","22")}}
-		as
+		{{m := map("a","11", "b","12", "c", newObjectId())}}
+		{{deleteMapProperty(m, "b") }}
+		{{context("map", m)}}
 		`
 
 		result, _ := RenderMemTemplate(engine, templateContext, c, "demo", template)

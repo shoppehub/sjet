@@ -30,6 +30,7 @@ func InitGlobalFunc(t *engine.TemplateEngine) {
 	t.Views.AddGlobalFunc("numArray", numArrayFunc)
 	// 支持把数据转换为字符串，比如 objectId
 	t.Views.AddGlobalFunc("oid", oidFunc)
+	t.Views.AddGlobalFunc("newObjectId", newObjectIdFunc)
 
 	//function/strings.go:31 已完成{{ formatTime(info.createdAt,"2006-01-02")}}
 	t.Views.AddGlobalFunc("time", timeFunc)
@@ -41,6 +42,7 @@ func InitGlobalFunc(t *engine.TemplateEngine) {
 	t.Views.AddGlobalFunc("formatUrlPath", formatUrlPathFunc)
 
 	t.Views.AddGlobalFunc("map", mapFunc)
+	t.Views.AddGlobalFunc("deleteMapProperty", deleteMapPropertyFunc)
 	t.Views.AddGlobalFunc("put", putFunc)
 	t.Views.AddGlobalFunc("delete", deleteFunc)
 	t.Views.AddGlobalFunc("append", appendFunc)
@@ -70,6 +72,10 @@ func oidFunc(a jet.Arguments) reflect.Value {
 		return reflect.ValueOf("")
 	}
 	oid, _ := primitive.ObjectIDFromHex(a.Get(0).String())
+	return reflect.ValueOf(oid)
+}
+func newObjectIdFunc(a jet.Arguments) reflect.Value {
+	oid := primitive.NewObjectID()
 	return reflect.ValueOf(oid)
 }
 func timeFunc(a jet.Arguments) reflect.Value {
@@ -278,6 +284,17 @@ func mapFunc(a jet.Arguments) reflect.Value {
 		m.SetMapIndex(a.Get(i), a.Get(i+1))
 	}
 	return m
+}
+
+func deleteMapPropertyFunc(a jet.Arguments) reflect.Value {
+	if a.NumOfArguments() != 2 {
+		return reflect.ValueOf(a.Get(0))
+	}
+	m := a.Get(0).Interface().(map[string]interface{})
+
+	delete(m, a.Get(1).String())
+
+	return reflect.ValueOf(m)
 }
 
 func deleteFunc(a jet.Arguments) reflect.Value {
