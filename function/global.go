@@ -49,6 +49,7 @@ func InitGlobalFunc(t *engine.TemplateEngine) {
 
 	t.Views.AddGlobalFunc("array", arrayFunc)
 	t.Views.AddGlobalFunc("arraySort", arraySortFunc)
+	t.Views.AddGlobalFunc("arrayAppend", arrayAppendFunc)
 
 	t.Views.AddGlobalFunc("aggregate", aggregateFunc)
 	t.Views.AddGlobalFunc("pipeline", aggregateFunc)
@@ -484,7 +485,14 @@ func arraySortFunc(a jet.Arguments) reflect.Value {
 	})
 	return reflect.ValueOf(result)
 }
-
+func arrayAppendFunc(a jet.Arguments) reflect.Value {
+	var p []interface{}
+	for i := 0; i < a.NumOfArguments(); i++ {
+		p = append(p, a.Get(i).Interface().([]interface{})...)
+	}
+	m := reflect.ValueOf(p)
+	return m
+}
 func logFunc(a jet.Arguments) reflect.Value {
 
 	level := a.Get(0).Interface().(string)

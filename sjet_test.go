@@ -55,9 +55,9 @@ func SetupRouter(engine *engine.TemplateEngine) *gin.Engine {
 		templateContext := context.InitTemplateContext(engine, c)
 
 		template := `
-		{{m := map("a","11", "b","12", "c", newObjectId())}}
-		{{deleteMapProperty(m, "b") }}
-		{{context("map", m)}}
+		{{m := array("a","11", "b","12", "c", newObjectId())}}
+		{{m = arrayAppend(m, array("xxx")) }}
+		{{context("result", m)}}
 		`
 
 		result, _ := RenderMemTemplate(engine, templateContext, c, "demo", template)
