@@ -235,15 +235,6 @@ func casIdEncodeFunc(a jet.Arguments) reflect.Value {
 
 func casIdDecodeFunc(a jet.Arguments) reflect.Value {
 	encodedStr := a.Get(0).String()
-	encodedStr = encodedStr[len(encodedStr)-4:] + encodedStr[0:len(encodedStr)-4]
-	fmt.Println(encodedStr)
-	n, err := strconv.ParseUint(encodedStr, 16, 32)
-	if err != nil {
-		panic("Parse Error")
-	}
-	casId := uint32(n)
-	if casId > uint32(100000000) {
-		casId = casId - 100000000
-	}
+	casId := common.DecodeCasId(encodedStr)
 	return reflect.ValueOf(casId)
 }

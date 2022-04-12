@@ -43,3 +43,16 @@ func EncodeCasId(casId int64) string {
 	encodedStr = encodedStr[4:] + encodedStr[0:4]
 	return encodedStr
 }
+
+func DecodeCasId(encodedStr string) uint32 {
+	encodedStr = encodedStr[len(encodedStr)-4:] + encodedStr[0:len(encodedStr)-4]
+	n, err := strconv.ParseUint(encodedStr, 16, 32)
+	if err != nil {
+		panic("Parse Error")
+	}
+	casId := uint32(n)
+	if casId > uint32(100000000) {
+		casId = casId - 100000000
+	}
+	return casId
+}
