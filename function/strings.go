@@ -48,6 +48,9 @@ func init() {
 
 	globalFunc["contains"] = containsFunc
 
+	globalFunc["idEncode"] = idEncodeFunc
+	globalFunc["idDecode"] = idDecodeFunc
+
 	globalFunc["casIdEncode"] = casIdEncodeFunc
 	globalFunc["casIdDecode"] = casIdDecodeFunc
 
@@ -218,6 +221,25 @@ func containsFunc(a jet.Arguments) reflect.Value {
 	str := a.Get(0).String()
 	subStr := a.Get(1).String()
 	return reflect.ValueOf(strings.Contains(str, subStr))
+}
+
+func idEncodeFunc(a jet.Arguments) reflect.Value {
+	var casId int64
+	k := a.Get(0).Kind()
+	switch k {
+	case reflect.Float64:
+		casId = int64(a.Get(0).Float())
+	default:
+		casId = a.Get(0).Int()
+	}
+	encodedStr := common.EncodeId(casId)
+	return reflect.ValueOf(encodedStr)
+}
+
+func idDecodeFunc(a jet.Arguments) reflect.Value {
+	encodedStr := a.Get(0).String()
+	id := common.DecodeId(encodedStr)
+	return reflect.ValueOf(id)
 }
 
 func casIdEncodeFunc(a jet.Arguments) reflect.Value {

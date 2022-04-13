@@ -35,6 +35,26 @@ func SpecialLetters(letter rune) (bool, []rune) {
 	return false, nil
 }
 
+// 对自增序列进行编码
+func EncodeId(id int64) string {
+	// 1.转为16进制
+	idStr := strings.ToUpper(strconv.FormatInt(id, 16))
+	// 2.前4位移动到结尾
+	idStr = idStr[4:] + idStr[0:4]
+	return idStr
+}
+
+//解码id
+func DecodeId(idStr string) uint32 {
+	idStr = idStr[len(idStr)-4:] + idStr[0:len(idStr)-4]
+	n, err := strconv.ParseUint(idStr, 16, 32)
+	if err != nil {
+		panic("Parse Error")
+	}
+	id := uint32(n)
+	return id
+}
+
 func EncodeCasId(casId int64) string {
 	if casId < int64(10000000) {
 		casId = casId + 100000000
