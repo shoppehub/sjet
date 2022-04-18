@@ -32,6 +32,21 @@ func CreateWithMem() *engine.TemplateEngine {
 
 func RenderHTMLTemplate(eng *engine.TemplateEngine, c *gin.Context) {
 
+	result, done := combineHTML(eng, c, nil)
+	if done {
+		return
+	}
+	c.Writer.Write([]byte(result))
+}
+func RenderHTMLTemplateWithReplaceMap(eng *engine.TemplateEngine, c *gin.Context, replaceMap map[string]string) {
+
+	result, done := combineHTML(eng, c, replaceMap)
+	if done {
+		return
+	}
+	c.Writer.Write([]byte(result))
+}
+func combineHTML(eng *engine.TemplateEngine, c *gin.Context, replaceMap map[string]string) (string, bool) {
 	templateContext := context.InitTemplateContext(eng, c)
 
 	err := templateContext.FindTemplate(eng)
@@ -45,7 +60,7 @@ func RenderHTMLTemplate(eng *engine.TemplateEngine, c *gin.Context) {
 				"err": err.Error(),
 			})
 		}
-		return
+		return "", true
 	}
 
 	for key, v := range customFunc {
@@ -75,9 +90,15 @@ func RenderHTMLTemplate(eng *engine.TemplateEngine, c *gin.Context) {
 
 	if err != nil {
 		c.Writer.WriteString(err.Error())
-		return
+		return "", true
 	}
-	c.Writer.Write(buf.Bytes())
+	result := buf.String()
+	if replaceMap != nil {
+		for key, value := range replaceMap {
+			result = strings.Replace(buf.String(), key, value, -1)
+		}
+	}
+	return result, false
 }
 
 func RenderMemTemplate(eng *engine.TemplateEngine, templateContext *context.TemplateContext, c *gin.Context, fnName string, fnTemplate string) (string, error) {
