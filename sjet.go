@@ -95,7 +95,7 @@ func combineHTML(eng *engine.TemplateEngine, c *gin.Context, replaceMap map[stri
 	result := buf.String()
 	if replaceMap != nil {
 		for key, value := range replaceMap {
-			result = strings.Replace(buf.String(), key, value, -1)
+			result = strings.Replace(result, key, value, -1)
 		}
 	}
 	return result, false
