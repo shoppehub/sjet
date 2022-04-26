@@ -11,6 +11,7 @@ import (
 	"github.com/shopspring/decimal"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"net/url"
 	"reflect"
 	"regexp"
 	"strconv"
@@ -25,6 +26,8 @@ func init() {
 	globalFunc["base64Decode"] = base64DecodeFunc
 
 	globalFunc["substring"] = substringFunc
+
+	globalFunc["urlEncode"] = urlEncodeFunc
 
 	globalFunc["indexOf"] = indexOfFunc
 
@@ -113,6 +116,12 @@ func substringFunc(a jet.Arguments) reflect.Value {
 		}
 		return reflect.ValueOf(string(strs[start:end]))
 	}
+}
+
+func urlEncodeFunc(a jet.Arguments) reflect.Value {
+	value := a.Get(0).String()
+	value = url.PathEscape(value)
+	return reflect.ValueOf(value)
 }
 
 func lenStrFunc(a jet.Arguments) reflect.Value {
