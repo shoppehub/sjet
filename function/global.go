@@ -1,6 +1,7 @@
 package function
 
 import (
+	"fmt"
 	"github.com/shoppehub/sjet/common"
 	"math"
 	"net/url"
@@ -86,15 +87,27 @@ func timeFunc(a jet.Arguments) reflect.Value {
 	}
 	str := value.String()
 	layout := "2006-01-02 15:04:05"
-	if strings.IndexAny(str, ":") == -1 {
-		layout = "2006-01-02"
+	timeZone := time.UTC
+	if a.NumOfArguments() == 1 {
+		if strings.IndexAny(str, ":") == -1 {
+			layout = "2006-01-02"
+		}
+
+		if strings.Contains(str, "T") {
+			layout = time.RFC3339
+		}
+	} else if a.NumOfArguments() == 2 {
+		layout = a.Get(1).String()
+	} else if a.NumOfArguments() == 3 {
+		layout = a.Get(1).String()
+		zoneOffsetStr := a.Get(2).String()
+		zoneOffset, _ := strconv.ParseInt(zoneOffsetStr, 10, 64)
+		offsetHourDuration := time.Duration(zoneOffset) * time.Nanosecond
+		secondsOffsetUTC := int((offsetHourDuration * time.Hour).Seconds())
+		timeZone = time.FixedZone(fmt.Sprintf("UTC%v", zoneOffset), secondsOffsetUTC)
 	}
 
-	if strings.Contains(str, "T") {
-		layout = time.RFC3339
-	}
-
-	val, _ := time.Parse(layout, str)
+	val, _ := time.ParseInLocation(layout, str, timeZone)
 	//if err != nil {
 	//	ejson, _ := json.Marshal(field)
 	//	return nil, errors.New("value :" + value.(string) + " " + err.Error() + " ; the field config is " + string(ejson))
