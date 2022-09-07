@@ -51,12 +51,12 @@ func combineHTML(eng *engine.TemplateEngine, c *gin.Context, replaceMap map[stri
 
 	err := templateContext.FindTemplate(eng)
 	if err != nil {
-		logrus.Error(gin.Mode(), err.Error())
 		if gin.Mode() == gin.ReleaseMode {
+			logrus.Error("「", gin.Mode(), "环境，自动跳转404」: ", err.Error())
 			c.Redirect(http.StatusFound, "/error/404")
 		} else {
-			logrus.Debug("非 Release 环境，不自动跳转404")
-			c.JSON(http.StatusNotFound, gin.H{
+			logrus.Error("「", gin.Mode(), "环境，不跳转404」: ", err.Error())
+			c.JSON(http.StatusInternalServerError, gin.H{
 				"err": err.Error(),
 			})
 		}
