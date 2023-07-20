@@ -67,6 +67,12 @@ func InitGlobalFunc(t *engine.TemplateEngine) {
 	t.Views.AddGlobalFunc("log", logFunc)
 
 	t.Views.AddGlobalFunc("exit", exitFunc)
+	// TODO 原来在业务工程中的代码提到框架上来。
+	//sjet.RegCustomFunc("postJson", func(c *gin.Context) jet.Func { return network.PostJson() })
+	//sjet.RegCustomFunc("getWidthHeader", func(c *gin.Context) jet.Func { return network.GetWithHeader() })
+	//sjet.RegCustomFunc("getWithHeader", func(c *gin.Context) jet.Func { return network.GetWithHeader() })
+	//sjet.RegCustomFunc("postWithHeader", func(c *gin.Context) jet.Func { return network.PostWithHeader() })
+	//sjet.RegCustomFunc("putWithHeader", func(c *gin.Context) jet.Func { return network.PostWithHeader() })
 }
 
 func oidFunc(a jet.Arguments) reflect.Value {
