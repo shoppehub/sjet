@@ -175,6 +175,18 @@ func handlerGetCtx(vars *jet.VarMap, c *gin.Context) {
 	vars.SetFunc("getHeader", func(a jet.Arguments) reflect.Value {
 		return reflect.ValueOf(c.Request.Header)
 	})
+	vars.SetFunc("getCookie", func(a jet.Arguments) reflect.Value {
+		return reflect.ValueOf(c.Request.Cookies()[0])
+	})
+	vars.SetFunc("getCookieValue", func(a jet.Arguments) reflect.Value {
+		key := a.Get(0).String()
+
+		val, err := c.Request.Cookie(key)
+		if err != nil {
+			reflect.ValueOf("")
+		}
+		return reflect.ValueOf(val)
+	})
 }
 
 func handlerContext(vars *jet.VarMap, context *map[string]interface{}) {
