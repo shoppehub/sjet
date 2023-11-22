@@ -183,7 +183,7 @@ func handlerGetCtx(vars *jet.VarMap, c *gin.Context) {
 
 		cookie, err := c.Request.Cookie(key)
 		if err != nil {
-			reflect.ValueOf("")
+			return reflect.ValueOf("")
 		}
 		return reflect.ValueOf(cookie.Value)
 	})
